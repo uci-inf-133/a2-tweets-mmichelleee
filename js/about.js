@@ -76,6 +76,7 @@ function parseTweets(runkeeper_tweets) {
 	document.querySelectorAll('.completedEvents')[1].innerText = tweetCounter.completed_event;
 	document.querySelector('.written').innerText = userWritten.length;
 	document.querySelector('.writtenPct').innerText = pctWritten.toFixed(2) + '%';
+	
 
 }
 

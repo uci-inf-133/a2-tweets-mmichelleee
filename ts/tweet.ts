@@ -57,7 +57,14 @@ class Tweet {
             return "unknown";
         }
         //TODO: parse the activity type from the text of the tweet
-        return "";
+        let textLower = this.text.toLowerCase();
+        const activities = ["run", "walk", "bike", "hike", "swim", "yoga", "elliptical", "ski"];
+        for (const activity of activities) {
+            if (textLower.includes(` ${activity} `) || textLower.includes(` ${activity} with `)) {
+                return activity;
+            }
+        }
+        return "other";
     }
 
     get distance():number {
@@ -65,11 +72,35 @@ class Tweet {
             return 0;
         }
         //TODO: prase the distance from the text of the tweet
-        return 0;
+        const match = this.text.match(/([\d\.]+)\s*(km|mi)/i);
+        if (!match) {
+            return 0;
+        }
+        let value = parseFloat(match[1]);
+        const unit = match[2].toLowerCase();
+
+        if (unit == 'km') {
+            value *= 0.621371;
+        }
+        return value;
     }
 
     getHTMLTableRow(rowNumber:number):string {
         //TODO: return a table row which summarizes the tweet with a clickable link to the RunKeeper activity
-        return "<tr></tr>";
+    const urlMatch = this.text.match(/https?:\/\/\S+/);
+    const activityURL = urlMatch ? urlMatch[0] : "#";
+
+    const safeText = this.text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    return `
+        <tr>
+            <td>${rowNumber}</td>
+            <td>${safeText}</td>
+            <td>${this.source}</td>
+            <td>${this.activityType}</td>
+            <td>${this.distance.toFixed(2)} mi</td>
+            <td><a href="${activityURL}" target="_blank">View Activity</a></td>
+        </tr>
+    `;
     }
 }
